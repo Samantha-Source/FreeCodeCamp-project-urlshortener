@@ -32,7 +32,6 @@ app.get('/', function(req, res) {
 });
 
 
-
 async function createAndSaveURL(url) {
   try {
     const result = await url.save({
@@ -60,16 +59,12 @@ app.post('/api/shorturl', async (req, res) => {
   const parsedUrl = new URL(url);
   const hostname = parsedUrl.hostname;
 
-  // console.log(`parsedUrl: ${parsedUrl} //// hostname: ${hostname}`);
-
-  dns.lookup(hostname, (err, address, family) => {
+  dns.lookup(hostname, (err) => {
     if (err) {
       console.error(err);
       res.json({ error: 'invalid URL' });
       return;
     }
-
-    // console.log(`Address: ${address} Family: IPv${family}`);
     
     const newURL = new URLModel({
       original_url: parsedUrl,
@@ -79,7 +74,7 @@ app.post('/api/shorturl', async (req, res) => {
 
     try {
       createAndSaveURL(newURL);
-      res.send({ original_url: url, short_url: newURL._id })
+      res.send({ original_url: url, short_url: newURL.short_url })
     } catch (error) {
       res.status(500).send({ error: 'invalid url'});
     }
@@ -103,20 +98,7 @@ app.get('/api/shorturl/:shorturl', async (req, res, next) => {
     console.error('Error finding url:', error);
     throw new Error('Error finding url');
   }
-
-
-
 })
-
-
-
-
-
-
-
-
-
-
 
 
 
