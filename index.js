@@ -56,7 +56,7 @@ app.post('/api/shorturl', async (req, res) => {
   try {
     const parsedUrl = new URL(url);
   } catch (error) {
-    res.send({ error: 'invalid url'});
+    res.json({ error: 'invalid url'});
     return console.error(error);
   }
 
@@ -68,7 +68,7 @@ app.post('/api/shorturl', async (req, res) => {
   dns.lookup(hostname, (err, address, family) => {
     if (err) {
       console.error(err);
-      res.status(400).send({ error: 'Invalid URL' });
+      res.json({ error: 'invalid URL' });
       return;
     }
 
