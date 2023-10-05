@@ -1,6 +1,7 @@
 {
   "name": "shorturl",
   "version": "0.0.3",
+  "author": "Samantha Brown & FreeCodeCamp.org",
   "description": "API project for freeCodeCamp",
   "main": "index.js",
   "scripts": {
