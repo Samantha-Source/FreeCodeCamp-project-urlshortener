@@ -31,10 +31,7 @@ app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
-// Your first API endpoint
-// app.get('/api/hello', function(req, res) {
-//   res.json({ greeting: 'hello API' });
-// });
+
 
 async function createAndSaveURL(url) {
   try {
@@ -63,7 +60,7 @@ app.post('/api/shorturl', async (req, res) => {
   const parsedUrl = new URL(url);
   const hostname = parsedUrl.hostname;
 
-  console.log(`parsedUrl: ${parsedUrl} //// hostname: ${hostname}`);
+  // console.log(`parsedUrl: ${parsedUrl} //// hostname: ${hostname}`);
 
   dns.lookup(hostname, (err, address, family) => {
     if (err) {
@@ -72,8 +69,7 @@ app.post('/api/shorturl', async (req, res) => {
       return;
     }
 
-
-    console.log(`Address: ${address} Family: IPv${family}`);
+    // console.log(`Address: ${address} Family: IPv${family}`);
     
     const newURL = new URLModel({
       original_url: parsedUrl,
@@ -89,6 +85,27 @@ app.post('/api/shorturl', async (req, res) => {
     }
 
   });
+})
+
+app.get('/api/shorturl/:shorturl', async (req, res, next) => {
+  const { shorturl } = req.params
+  try {
+    var result = await URLModel.find({ short_url: shorturl });
+
+    if (!result) {
+      res.status(404).send('URL not found');
+      return;
+    }
+
+    const { original_url } = result[0];
+    res.redirect(original_url);
+  } catch (error) {
+    console.error('Error finding url:', error);
+    throw new Error('Error finding url');
+  }
+
+
+
 })
 
 
