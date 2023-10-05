@@ -53,10 +53,18 @@ async function createAndSaveURL(url) {
 app.post('/api/shorturl', async (req, res) => {
   const { url } = req.body;
 
+  try {
+    const parsedUrl = new URL(url);
+  } catch (error) {
+    res.send({ error: 'invalid url'});
+    return console.error(error);
+  }
+
   const parsedUrl = new URL(url);
   const hostname = parsedUrl.hostname;
 
-  console.log(`parsedUrl: ${parsedUrl} //// hostname: ${hostname}`)
+  console.log(`parsedUrl: ${parsedUrl} //// hostname: ${hostname}`);
+
   dns.lookup(hostname, (err, address, family) => {
     if (err) {
       console.error(err);
@@ -72,23 +80,14 @@ app.post('/api/shorturl', async (req, res) => {
     })
 
     newURL.short_url = newURL._id;
-    console.log(newURL);
-    // // const result = newURL.save({
-    // //   original_url: newURL.original_url,
-    // //   short_url: newURL._id.toString(),
-    // //   _id: newURL._id,
-    // // })
-    // const result = createAndSaveURL(newURL);
-    // console.log(result)
+
     try {
-      const shortUrl = createAndSaveURL(newURL);
+      createAndSaveURL(newURL);
       res.send({ original_url: url, short_url: newURL._id })
     } catch (error) {
-      res.status(500).send({ error: 'Error creating short URL'});
+      res.status(500).send({ error: 'invalid url'});
     }
 
-
-    // res.send({ original_url: url, short_url: newURL.short_url });
   });
 })
 
